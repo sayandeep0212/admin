@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | GameLiminals</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS for better table styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+         :root {
+            --primary-color: #4a6fff;
+            --secondary-color: #ff6b6b;
+            --accent-color: #00d4aa;
+            --dark-bg: #1a1d28;
+            --light-bg: #2d3246;
+            --text-light: #e2e8f0;
+            --text-dark: #333;
+            --danger: #ff4757;
+            --success: #2ed573;
+            --warning: #ffa502;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+        
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* Header */
+        
+        .admin-header {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-section h1 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        
+        .logo-section span {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        /* Stats Cards */
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--light-bg), #363c52);
+            padding: 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .stat-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+        
+        .stat-info p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        /* Search Section */
+        
+        .search-section {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .search-group {
+            position: relative;
+        }
+        
+        .search-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+        
+        .search-group input,
+        .search-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-group input:focus,
+        .search-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .search-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00d2d3);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #ff6b81);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        /* Main Content */
+        
+        .main-content {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .content-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .export-btn {
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+        }
+        /* Table Styles */
+        
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1px;
+        }
+        
+        .data-table {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            border-collapse: collapse;
+        }
+        
+        .data-table thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        }
+        
+        .data-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+            white-space: nowrap;
+        }
+        
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+        
+        .data-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        /* Status Badges */
+        
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-pending {
+            background: rgba(255, 165, 2, 0.2);
+            color: var(--warning);
+        }
+        
+        .status-approved {
+            background: rgba(46, 213, 115, 0.2);
+            color: var(--success);
+        }
+        /* Action Buttons */
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .action-view:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .action-delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+        /* Checkbox */
+        
+        .select-checkbox {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        /* No Data */
+        
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        /* Loading */
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* Modal */
+        
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--light-bg);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-backdrop.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            color: var(--text-light);
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        
+        .modal-close:hover {
+            opacity: 1;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .detail-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .detail-value {
+            font-size: 1rem;
+            color: var(--text-light);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .detail-text {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        /* Notification */
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 9999;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s forwards;
+        }
+        
+        .notification.success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .notification.error {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.2rem;
+            opacity: 0.7;
+        }
+        
+        .notification-close:hover {
+            opacity: 1;
+        }
+        
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+            }
+        }
+        /* Responsive */
+        
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .search-row {
+                grid-template-columns: 1fr;
+            }
+            .content-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .export-buttons {
+                justify-content: center;
+            }
+            .data-table th,
+            .data-table td {
+                padding: 0.8rem 0.5rem;
+                font-size: 0.85rem;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .action-btn {
+                width: 30px;
+                height: 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .search-actions {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .export-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            .export-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-top">
+                <div class="logo-section">
+                    <i class="fas fa-shield-alt fa-2x"></i>
+                    <div>
+                        <h1>GameLiminals Admin Panel</h1>
+                        <span>Student Registration Management</span>
+                    </div>
+                </div>
+                <div class="admin-info">
+                    <div class="admin-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <p style="font-weight: 600; margin-bottom: 0;">Administrator</p>
+                        <p style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 0;">Game Development Club</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalStudents">0</h3>
+                        <p>Total Students</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, var(--warning), #ff6348);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pendingStudents">0</h3>
+                        <p>Pending Review</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, var(--success), #7bed9f);">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="todayRegistrations">0</h3>
+                        <p>Today's Registrations</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalDepartments">0</h3>
+                        <p>Departments</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <h2 style="margin-bottom: 1.5rem;"><i class="fas fa-search"></i> Search & Filter Students</h2>
+
+            <div class="search-row">
+                <div class="search-group">
+                    <label><i class="fas fa-user"></i> Name</label>
+                    <input type="text" id="searchName" placeholder="Search by name...">
+                </div>
+                <div class="search-group">
+                    <label><i class="fas fa-id-card"></i> Registration No</label>
+                    <input type="text" id="searchRegNo" placeholder="Enter registration number...">
+                </div>
+                <div class="search-group">
+                    <label><i class="fas fa-hashtag"></i> Roll No</label>
+                    <input type="text" id="searchRollNo" placeholder="Enter roll number...">
+                </div>
+                <div class="search-group">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <input type="email" id="searchEmail" placeholder="Enter email address...">
+                </div>
+            </div>
+
+            <div class="search-row">
+                <div class="search-group">
+                    <label><i class="fas fa-phone"></i> Phone</label>
+                    <input type="text" id="searchPhone" placeholder="Enter phone number...">
+                </div>
+                <div class="search-group">
+                    <label><i class="fas fa-graduation-cap"></i> Department</label>
+                    <select id="searchDepartment">
+                        <option value="">All Departments</option>
+                        <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Electronics & Communication">Electronics & Communication</option>
+                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        <option value="Civil Engineering">Civil Engineering</option>
+                        <option value="Business Administration">Business Administration</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <label><i class="fas fa-filter"></i> Status</label>
+                    <select id="searchStatus">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <label><i class="fas fa-calendar"></i> Semester</label>
+                    <select id="searchSemester">
+                        <option value="">All Semesters</option>
+                        <option value="1">1st Semester</option>
+                        <option value="2">2nd Semester</option>
+                        <option value="3">3rd Semester</option>
+                        <option value="4">4th Semester</option>
+                        <option value="5">5th Semester</option>
+                        <option value="6">6th Semester</option>
+                        <option value="7">7th Semester</option>
+                        <option value="8">8th Semester</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="search-actions">
+                <button class="btn btn-primary" id="searchBtn">
+                    <i class="fas fa-search"></i> Search Students
+                </button>
+                <button class="btn btn-secondary" id="clearBtn">
+                    <i class="fas fa-eraser"></i> Clear Filters
+                </button>
+                <button class="btn btn-danger" id="deleteSelectedBtn" style="display: none;">
+                    <i class="fas fa-trash"></i> Delete Selected
+                </button>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2><i class="fas fa-table"></i> Student Registrations</h2>
+                <div class="export-buttons">
+                    <button class="btn btn-success export-btn" id="exportExcel">
+                        <i class="fas fa-file-excel"></i> Export Excel
+                    </button>
+                    <button class="btn btn-secondary export-btn" id="exportCSV">
+                        <i class="fas fa-file-csv"></i> Export CSV
+                    </button>
+                    <button class="btn btn-primary export-btn" id="exportJSON">
+                        <i class="fas fa-file-code"></i> Export JSON
+                    </button>
+                    <button class="btn btn-secondary export-btn" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">
+                                <input type="checkbox" id="selectAll" class="select-checkbox">
+                            </th>
+                            <th>Application ID</th>
+                            <th>Name</th>
+                            <th>Reg. No</th>
+                            <th>Roll No</th>
+                            <th>Department</th>
+                            <th>Sem</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Loading -->
+            <div id="loading" class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading student data...</p>
+            </div>
+
+            <!-- No Data -->
+            <div id="noData" class="no-data" style="display: none;">
+                <i class="fas fa-database"></i>
+                <h3>No Student Data Found</h3>
+                <p>No registrations match your search criteria</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div class="modal-backdrop" id="studentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-graduate"></i> Student Details</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="deleteStudentBtn">
+                    <i class="fas fa-trash"></i> Delete Record
+                </button>
+                <button class="btn btn-secondary" id="closeModalBtn">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // ================= FIREBASE IMPORTS ================= import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"; import { getFirestore, collection, getDocs, deleteDoc, doc, query, where, orderBy, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // ================= FIREBASE CONFIG ================= const firebaseConfig = { apiKey: "AIzaSyAe13QXrLdAG0g4Xd98FiaMeyoJCRYi5lM", authDomain: "gameliminals.firebaseapp.com", projectId: "gameliminals", storageBucket: "gameliminals.firebasestorage.app",
+        messagingSenderId: "262478638152", appId: "1:262478638152:web:fd01af842dc2fbaa70fc7d" }; // ================= INITIALIZE FIREBASE ================= const app = initializeApp(firebaseConfig); const db = getFirestore(app); // ================= GLOBAL
+        VARIABLES ================= let allStudents = []; let filteredStudents = []; let selectedStudents = new Set(); let currentStudentId = null; // ================= DOM ELEMENTS ================= const tableBody = document.getElementById('tableBody');
+        const loadingElement = document.getElementById('loading'); const noDataElement = document.getElementById('noData'); // Stats elements const totalStudentsElement = document.getElementById('totalStudents'); const pendingStudentsElement = document.getElementById('pendingStudents');
+        const todayRegistrationsElement = document.getElementById('todayRegistrations'); const totalDepartmentsElement = document.getElementById('totalDepartments'); // Search elements const searchBtn = document.getElementById('searchBtn'); const clearBtn
+        = document.getElementById('clearBtn'); const searchName = document.getElementById('searchName'); const searchRegNo = document.getElementById('searchRegNo'); const searchRollNo = document.getElementById('searchRollNo'); const searchEmail = document.getElementById('searchEmail');
+        const searchPhone = document.getElementById('searchPhone'); const searchDepartment = document.getElementById('searchDepartment'); const searchStatus = document.getElementById('searchStatus'); const searchSemester = document.getElementById('searchSemester');
+        // Export buttons const exportExcelBtn = document.getElementById('exportExcel'); const exportCSVBtn = document.getElementById('exportCSV'); const exportJSONBtn = document.getElementById('exportJSON'); const refreshBtn = document.getElementById('refreshBtn');
+        // Selection const selectAll = document.getElementById('selectAll'); const deleteSelectedBtn = document.getElementById('deleteSelectedBtn'); // Modal elements const studentModal = document.getElementById('studentModal'); const modalBody = document.getElementById('modalBody');
+        const modalClose = document.getElementById('modalClose'); const closeModalBtn = document.getElementById('closeModalBtn'); const deleteStudentBtn = document.getElementById('deleteStudentBtn'); // ================= UTILITY FUNCTIONS =================
+        function showLoading() { loadingElement.style.display = 'block'; noDataElement.style.display = 'none'; tableBody.innerHTML = ''; } function hideLoading() { loadingElement.style.display = 'none'; } function showNoData() { noDataElement.style.display
+        = 'block'; tableBody.innerHTML = ''; } function formatDate(timestamp) { if (!timestamp) return 'N/A'; try { const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp); return date.toLocaleDateString('en-IN', { day: 'numeric', month:
+        'short', year: 'numeric' }); } catch (error) { return 'Invalid Date'; } } function formatDateTime(timestamp) { if (!timestamp) return 'N/A'; try { const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp); return date.toLocaleDateString('en-IN',
+        { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch (error) { return 'Invalid Date'; } } function formatStatus(status) { const statusMap = { 'pending': { text: 'Pending', class: 'status-pending' },
+        'approved': { text: 'Approved', class: 'status-approved' } }; const statusInfo = statusMap[status] || { text: 'Unknown', class: 'status-pending' }; return `<span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>`; } //
+        ================= NOTIFICATION SYSTEM ================= function showNotification(message, type = 'success') { const notification = document.createElement('div'); notification.className = `notification ${type}`; notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <span>${message}</span>
+        <button class="notification-close"><i class="fas fa-times"></i></button> `; document.body.appendChild(notification); // Show notification setTimeout(() => { notification.style.transform = 'translateX(0)'; }, 10); // Close button const closeBtn
+        = notification.querySelector('.notification-close'); closeBtn.addEventListener('click', () => { notification.style.transform = 'translateX(150%)'; setTimeout(() => { if (notification.parentNode) { document.body.removeChild(notification); } },
+        300); }); // Auto-remove after 5 seconds setTimeout(() => { if (notification.parentNode && notification.style.transform === 'translateX(0)') { notification.style.transform = 'translateX(150%)'; setTimeout(() => { if (notification.parentNode) {
+        document.body.removeChild(notification); } }, 300); } }, 5000); } // ================= DATA FETCHING ================= async function fetchAllStudents() { try { showLoading(); const studentsRef = collection(db, "students"); const q = query(studentsRef,
+        orderBy("createdAt", "desc")); const querySnapshot = await getDocs(q); allStudents = []; querySnapshot.forEach((doc) => { const data = doc.data(); allStudents.push({ id: doc.id, ...data, createdAt: data.createdAt || new Date() }); }); updateStatistics(allStudents);
+        filterStudents(); } catch (error) { console.error("Error fetching students:", error); showNotification('Failed to load student data', 'error'); } } function updateStatistics(students) { // Total students totalStudentsElement.textContent = students.length;
+        // Pending students const pending = students.filter(s => s.status === "pending").length; pendingStudentsElement.textContent = pending; // Today's registrations const today = new Date(); today.setHours(0, 0, 0, 0); const todayRegistrations = students.filter(student
+        => { try { const regDate = student.createdAt?.toDate ? student.createdAt.toDate() : new Date(student.createdAt); return regDate >= today; } catch { return false; } }).length; todayRegistrationsElement.textContent = todayRegistrations; // Unique
+        departments const departments = new Set(students.map(s => s.department).filter(Boolean)); totalDepartmentsElement.textContent = departments.size; } // ================= FILTERING ================= function filterStudents() { const nameFilter =
+        searchName.value.toLowerCase(); const regNoFilter = searchRegNo.value.toLowerCase(); const rollNoFilter = searchRollNo.value.toLowerCase(); const emailFilter = searchEmail.value.toLowerCase(); const phoneFilter = searchPhone.value.toLowerCase();
+        const departmentFilter = searchDepartment.value; const statusFilter = searchStatus.value; const semesterFilter = searchSemester.value; filteredStudents = allStudents.filter(student => { // Name filter if (nameFilter && !student.fullName?.toLowerCase().includes(nameFilter))
+        { return false; } // Registration number filter if (regNoFilter && !student.registrationNo?.toLowerCase().includes(regNoFilter)) { return false; } // Roll number filter if (rollNoFilter && !student.rollNo?.toLowerCase().includes(rollNoFilter))
+        { return false; } // Email filter if (emailFilter && !student.email?.toLowerCase().includes(emailFilter)) { return false; } // Phone filter if (phoneFilter && !student.phone?.includes(phoneFilter)) { return false; } // Department filter if (departmentFilter
+        && student.department !== departmentFilter) { return false; } // Status filter if (statusFilter && student.status !== statusFilter) { return false; } // Semester filter if (semesterFilter && student.semester !== semesterFilter) { return false;
+        } return true; }); renderTable(); } function clearFilters() { searchName.value = ""; searchRegNo.value = ""; searchRollNo.value = ""; searchEmail.value = ""; searchPhone.value = ""; searchDepartment.value = ""; searchStatus.value = ""; searchSemester.value
+        = ""; filterStudents(); } // ================= TABLE RENDERING ================= function renderTable() { hideLoading(); if (filteredStudents.length === 0) { showNoData(); deleteSelectedBtn.style.display = 'none'; return; } noDataElement.style.display
+        = 'none'; tableBody.innerHTML = filteredStudents.map((student, index) => `
+        <tr>
+            <td>
+                <input type="checkbox" class="student-checkbox select-checkbox" data-id="${student.id}" ${selectedStudents.has(student.id) ? 'checked' : ''}>
+            </td>
+            <td><strong>${student.applicationId || 'N/A'}</strong></td>
+            <td>${student.fullName || 'N/A'}</td>
+            <td>${student.registrationNo || 'N/A'}</td>
+            <td>${student.rollNo || 'N/A'}</td>
+            <td>${student.department || 'N/A'}</td>
+            <td>${student.semester ? student.semester + 'th' : 'N/A'}</td>
+            <td>${student.email || 'N/A'}</td>
+            <td>${student.phone || 'N/A'}</td>
+            <td>${formatStatus(student.status || 'pending')}</td>
+            <td>${formatDate(student.createdAt)}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="action-btn action-view" onclick="window.viewStudentDetails('${student.id}')" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                    <button class="action-btn action-delete" onclick="window.deleteStudent('${student.id}', '${student.fullName}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                </div>
+            </td>
+        </tr>
+        `).join(''); updateSelectionUI(); } // ================= SELECTION HANDLING ================= function updateSelectionUI() { const checkboxes = document.querySelectorAll('.student-checkbox'); let allChecked = true; checkboxes.forEach(checkbox => { checkbox.addEventListener('change',
+        function() { const studentId = this.getAttribute('data-id'); if (this.checked) { selectedStudents.add(studentId); } else { selectedStudents.delete(studentId); selectAll.checked = false; } updateDeleteButton(); }); if (!checkbox.checked) { allChecked
+        = false; } }); selectAll.checked = allChecked && checkboxes.length > 0; updateDeleteButton(); } selectAll.addEventListener('change', function() { const checkboxes = document.querySelectorAll('.student-checkbox'); if (this.checked) { checkboxes.forEach(checkbox
+        => { checkbox.checked = true; selectedStudents.add(checkbox.getAttribute('data-id')); }); } else { checkboxes.forEach(checkbox => { checkbox.checked = false; selectedStudents.delete(checkbox.getAttribute('data-id')); }); } updateDeleteButton();
+        }); function updateDeleteButton() { if (selectedStudents.size > 0) { deleteSelectedBtn.style.display = 'flex'; deleteSelectedBtn.innerHTML = `<i class="fas fa-trash"></i> Delete Selected (${selectedStudents.size})`; } else { deleteSelectedBtn.style.display
+        = 'none'; } } // ================= STUDENT DETAILS MODAL ================= async function viewStudentDetails(studentId) { try { const student = allStudents.find(s => s.id === studentId); if (!student) { showNotification('Student not found', 'error');
+        return; } currentStudentId = studentId; modalBody.innerHTML = `
+        <div class="detail-grid">
+            <div class="detail-group">
+                <div class="detail-label">Application ID</div>
+                <div class="detail-value">${student.applicationId || 'N/A'}</div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">Document ID</div>
+                <div class="detail-value"><code>${student.id}</code></div>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-group">
+                <div class="detail-label">Full Name</div>
+                <div class="detail-value">${student.fullName || 'N/A'}</div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">Registration Number</div>
+                <div class="detail-value">${student.registrationNo || 'N/A'}</div>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-group">
+                <div class="detail-label">Roll Number</div>
+                <div class="detail-value">${student.rollNo || 'N/A'}</div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">College Name</div>
+                <div class="detail-value">${student.collegeName || 'N/A'}</div>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-group">
+                <div class="detail-label">Department</div>
+                <div class="detail-value">${student.department || 'N/A'}</div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">Semester</div>
+                <div class="detail-value">${student.semester ? student.semester + 'th Semester' : 'N/A'}</div>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-group">
+                <div class="detail-label">Email Address</div>
+                <div class="detail-value">${student.email || 'N/A'}</div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">Phone Number</div>
+                <div class="detail-value">${student.phone || 'N/A'}</div>
+            </div>
+        </div>
+
+        <div class="detail-group">
+            <div class="detail-label">Why Join GameLiminals?</div>
+            <div class="detail-text">${student.whyJoin || 'N/A'}</div>
+        </div>
+
+        ${student.remarks ? `
+        <div class="detail-group">
+            <div class="detail-label">Remarks</div>
+            <div class="detail-text">${student.remarks}</div>
+        </div>
+        ` : ''}
+
+        <div class="detail-grid">
+            <div class="detail-group">
+                <div class="detail-label">Registration Status</div>
+                <div class="detail-value">${formatStatus(student.status || 'pending')}</div>
+            </div>
+
+            <div class="detail-group">
+                <div class="detail-label">Registered On</div>
+                <div class="detail-value">${formatDateTime(student.createdAt)}</div>
+            </div>
+        </div>
+        `; studentModal.classList.add('show'); } catch (error) { console.error("Error loading student details:", error); showNotification('Failed to load student details', 'error'); } } // ================= DELETE OPERATIONS ================= async function deleteStudent(studentId,
+        studentName) { if (!confirm(`Are you sure you want to delete "${studentName}"'s registration? This action cannot be undone.`)) { return; } try { await deleteDoc(doc(db, "students", studentId)); // Remove from arrays allStudents = allStudents.filter(s
+        => s.id !== studentId); filteredStudents = filteredStudents.filter(s => s.id !== studentId); selectedStudents.delete(studentId); updateStatistics(allStudents); renderTable(); showNotification(`"${studentName}"'s registration deleted successfully`);
+        // Close modal if open if (currentStudentId === studentId) { studentModal.classList.remove('show'); currentStudentId = null; } } catch (error) { console.error("Error deleting student:", error); showNotification('Failed to delete student record',
+        'error'); } } async function deleteSelectedStudents() { if (selectedStudents.size === 0) { showNotification('No students selected for deletion', 'error'); return; } if (!confirm(`Are you sure you want to delete ${selectedStudents.size} student(s)?
+        This action cannot be undone.`)) { return; } try { const deletePromises = Array.from(selectedStudents).map(async (studentId) => { await deleteDoc(doc(db, "students", studentId)); }); await Promise.all(deletePromises); // Update arrays allStudents
+        = allStudents.filter(s => !selectedStudents.has(s.id)); filteredStudents = filteredStudents.filter(s => !selectedStudents.has(s.id)); selectedStudents.clear(); updateStatistics(allStudents); renderTable(); showNotification(`${deletePromises.length}
+        student(s) deleted successfully`); // Close modal if open studentModal.classList.remove('show'); currentStudentId = null; } catch (error) { console.error("Error deleting selected students:", error); showNotification('Failed to delete selected
+        students', 'error'); } } // ================= EXPORT FUNCTIONS ================= function exportToExcel() { if (filteredStudents.length === 0) { showNotification('No data to export', 'error'); return; } try { const data = filteredStudents.map(student
+        => ({ 'Application ID': student.applicationId || '', 'Full Name': student.fullName || '', 'Registration No': student.registrationNo || '', 'Roll No': student.rollNo || '', 'College': student.collegeName || '', 'Department': student.department
+        || '', 'Semester': student.semester ? `${student.semester}th` : '', 'Email': student.email || '', 'Phone': student.phone || '', 'Why Join': student.whyJoin || '', 'Remarks': student.remarks || '', 'Status': student.status || 'pending', 'Registered
+        On': formatDateTime(student.createdAt) })); const worksheet = XLSX.utils.json_to_sheet(data); const workbook = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(workbook, worksheet, "Students"); // Generate filename with timestamp const timestamp
+        = new Date().toISOString().slice(0, 19).replace(/[:]/g, '-'); const filename = `GameLiminals_Students_${timestamp}.xlsx`; XLSX.writeFile(workbook, filename); showNotification(`Exported ${filteredStudents.length} records to Excel`); } catch (error)
+        { console.error("Error exporting to Excel:", error); showNotification('Failed to export to Excel', 'error'); } } function exportToCSV() { if (filteredStudents.length === 0) { showNotification('No data to export', 'error'); return; } try { const
+        headers = [ 'Application ID', 'Full Name', 'Registration No', 'Roll No', 'College', 'Department', 'Semester', 'Email', 'Phone', 'Why Join', 'Remarks', 'Status', 'Registered On' ]; const data = filteredStudents.map(student => [ student.applicationId
+        || '', student.fullName || '', student.registrationNo || '', student.rollNo || '', student.collegeName || '', student.department || '', student.semester ? `${student.semester}th` : '', student.email || '', student.phone || '', student.whyJoin
+        || '', student.remarks || '', student.status || 'pending', formatDateTime(student.createdAt) ]); const csvContent = [ headers.join(','), ...data.map(row => row.map(cell => `"${cell}"`).join(',')) ].join('\n'); // Create download link const blob
+        = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); const url = URL.createObjectURL(blob); link.setAttribute("href", url); link.setAttribute("download", `GameLiminals_Students_${new Date().toISOString().slice(0,
+        19).replace(/[:]/g, '-')}.csv`); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link); showNotification(`Exported ${filteredStudents.length} records to CSV`); } catch (error) { console.error("Error
+        exporting to CSV:", error); showNotification('Failed to export to CSV', 'error'); } } function exportToJSON() { if (filteredStudents.length === 0) { showNotification('No data to export', 'error'); return; } try { const data = filteredStudents.map(student
+        => ({ id: student.id, applicationId: student.applicationId, fullName: student.fullName, registrationNo: student.registrationNo, rollNo: student.rollNo, collegeName: student.collegeName, department: student.department, semester: student.semester,
+        email: student.email, phone: student.phone, whyJoin: student.whyJoin, remarks: student.remarks, status: student.status, createdAt: student.createdAt?.toDate ? student.createdAt.toDate().toISOString() : student.createdAt })); const jsonContent
+        = JSON.stringify(data, null, 2); const blob = new Blob([jsonContent], { type: 'application/json' }); const link = document.createElement("a"); const url = URL.createObjectURL(blob); link.setAttribute("href", url); link.setAttribute("download",
+        `GameLiminals_Students_${new Date().toISOString().slice(0, 19).replace(/[:]/g, '-')}.json`); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link); showNotification(`Exported ${filteredStudents.length}
+        records to JSON`); } catch (error) { console.error("Error exporting to JSON:", error); showNotification('Failed to export to JSON', 'error'); } } // ================= EVENT LISTENERS ================= searchBtn.addEventListener('click', filterStudents);
+        clearBtn.addEventListener('click', clearFilters); // Enter key search [searchName, searchRegNo, searchRollNo, searchEmail, searchPhone].forEach(input => { input.addEventListener('keyup', (e) => { if (e.key === 'Enter') filterStudents(); }); });
+        // Export buttons exportExcelBtn.addEventListener('click', exportToExcel); exportCSVBtn.addEventListener('click', exportToCSV); exportJSONBtn.addEventListener('click', exportToJSON); refreshBtn.addEventListener('click', fetchAllStudents); // Delete
+        selected deleteSelectedBtn.addEventListener('click', deleteSelectedStudents); // Modal events modalClose.addEventListener('click', () => { studentModal.classList.remove('show'); currentStudentId = null; }); closeModalBtn.addEventListener('click',
+        () => { studentModal.classList.remove('show'); currentStudentId = null; }); deleteStudentBtn.addEventListener('click', async () => { if (currentStudentId) { const student = allStudents.find(s => s.id === currentStudentId); if (student) { studentModal.classList.remove('show');
+        await deleteStudent(currentStudentId, student.fullName); } } }); // Close modal on background click studentModal.addEventListener('click', (e) => { if (e.target === studentModal) { studentModal.classList.remove('show'); currentStudentId = null;
+        } }); // ================= GLOBAL FUNCTIONS ================= window.viewStudentDetails = viewStudentDetails; window.deleteStudent = deleteStudent; // ================= INITIALIZE ================= document.addEventListener('DOMContentLoaded',
+        async () => { // Simple admin authentication const isLoggedIn = sessionStorage.getItem('admin_logged_in'); if (!isLoggedIn) { const password = prompt('Enter admin password:'); if (password === 'admin123') { sessionStorage.setItem('admin_logged_in',
+        'true'); showNotification('Login successful!', 'success'); } else { alert('Access denied. Invalid password.'); window.location.href = 'index.html'; return; } } // Load data await fetchAllStudents(); // Auto-refresh every 30 seconds setInterval(fetchAllStudents,
+        30000); }); // Logout function (can be added to a logout button if needed) function adminLogout() { sessionStorage.removeItem('admin_logged_in'); window.location.reload(); }
+    </script>
+</body>
+
+</html>
